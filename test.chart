@@ -1,0 +1,25 @@
+2024-01-01 # first line is the start date, if its not a sunday the column that contains it will ignore dates prior to specified start date
+
+# this is a comment
+# this is an empty row that is gonna be discarded
+
+# this is an almost empty row that will be padded with zeros
+0
+
+# this is a proper row:
+0001001010101010010010001111010010
+
+# this is another row:
+0101011110111101010001011110101011
+
+# there may be any amount of columns
+00000000000000000000000000000000011111111111111111111111111111111111111111111111
+
+# they may be only 7 rows 
+# again if shorter then padded with zeros
+101100110
+010101000
+011001010
+
+# the script will discard everything past the 7th row
+neener neener poop arse arse dump boink
