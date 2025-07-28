@@ -220,9 +220,9 @@ def main():
     diff_df = differences_between_dataframes(original=remote_df, desired=chart_df)
     diff_img = create_graph_image(diff_df)
 
-    #chart_img.show()
-    #remote_img.show()
-    #diff_img.show()
+    chart_img.show()
+    remote_img.show()
+    diff_img.show()
     dataframe_to_csv(df=diff_df, filepath="./changes.csv")
     exit(0)
 

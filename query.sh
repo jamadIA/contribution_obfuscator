@@ -9,7 +9,7 @@ fi
 from="${1:-$(date -d "1 year ago" +"%Y")-01-01}"
 
 gh api graphql \
--F from="$from"'T00:00:00Z' \
+-F from="$from"'T00:00:01Z' \
 -f query='
   query($from: DateTime!) {
     viewer {
