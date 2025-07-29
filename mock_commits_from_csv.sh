@@ -2,13 +2,13 @@
 
 # Each line in the file should be in the format: YYYY-MM-DD,NUM_COMMITS
 GIT_URL="$1"
-CONTRIBUTIONS_FILE="${2:-contributions.csv}"
+CONTRIBUTIONS_FILE="${2:-./contributions.csv}"
 
 # Name of the file that will be modified and committed.
 ACTIVITY_LOG_FILE="mock-activity.log"
 SCRIPT_PATH="$(dirname $(realpath "$0"))"
 TMP_REPO_DIR_NAME="tmp_clone"
-TMP_REPO_DIR_PATH="$SCRIPT_PATH/$TMP_REPO_DIRNAME"
+TMP_REPO_DIR_PATH="$SCRIPT_PATH/$TMP_REPO_DIR_NAME"
 
 if [[ ! -f "$CONTRIBUTIONS_FILE" ]]; then
   echo "Error: Contributions file '$CONTRIBUTIONS_FILE' not found."
@@ -63,7 +63,7 @@ while IFS=',' read -r date count; do
   done
 done < "$CONTRIBUTIONS_FILE"
 
-rm -f "$TMP_REPO_DIR_PATH/.git"
-rm -r "$TMP_REPO_DIR_PATH"
+#rm -f "$TMP_REPO_DIR_PATH/.git"
+#rm -r "$TMP_REPO_DIR_PATH"
 
 echo "Contribution generation complete! Look up the git log."
