@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Terminal Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        .terminal-footer {
+            height: 300px;
+            background: #1a1a1a;
+            border-top: 3px solid #667eea;
+            position: relative;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: #2d2d2d;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+        }
+
+        .close { background: #ff5f57; }
+        .minimize { background: #ffbd2e; }
+        .maximize { background: #28ca42; }
+
+        .terminal-title {
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .terminal-container {
+            height: calc(100% - 45px);
+            width: 100%;
+        }
+
+        .terminal-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+        }
+
+        .status-bar {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: #00ff00;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .toggle-terminal {
+            position: absolute;
+            top: -40px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-terminal:hover {
+            background: #5a6fd8;
+        }
+
+        .minimized {
+            height: 45px !important;
+        }
+
+        .minimized .terminal-container {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .terminal-footer {
+                height: 250px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 Development Dashboard</h1>
+        <p>Your local development environment with integrated terminal</p>
+    </div>
+
+    <div class="main-content">
+        <div class="card">
+            <h2>📊 System Overview</h2>
+            <p>Monitor your system resources and running processes. The terminal below provides direct access to your local environment.</p>
+            <div class="button-grid">
+                <button class="action-btn" onclick="runCommand('htop')">📈 System Monitor</button>
+                <button class="action-btn" onclick="runCommand('df -h')">💾 Disk Usage</button>
+                <button class="action-btn" onclick="runCommand('ps aux')">🔄 Processes</button>
+                <button class="action-btn" onclick="runCommand('free -h')">🧠 Memory Info</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ Development Tools</h2>
+            <p>Quick access to common development commands and tools.</p>
+            <div class="button-grid">
+                <button class="action-btn" onclick="runCommand('git status')">📂 Git Status</button>
+                <button class="action-btn" onclick="runCommand('npm run dev')">⚡ Start Dev Server</button>
+                <button class="action-btn" onclick="runCommand('docker ps')">🐳 Docker Containers</button>
+                <button class="action-btn" onclick="runCommand('ls -la')">📋 List Files</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="terminal-footer" id="terminalFooter">
+        <button class="toggle-terminal" onclick="toggleTerminal()">
+            <span id="toggleText">▼ Hide Terminal</span>
+        </button>
+        
+        <div class="terminal-header">
+            <div class="terminal-controls">
+                <button class="control-btn close" onclick="toggleTerminal()"></button>
+                <button class="control-btn minimize" onclick="toggleTerminal()"></button>
+                <button class="control-btn maximize" onclick="maximizeTerminal()"></button>
+            </div>
+            <div class="terminal-title">Terminal - ttyd@localhost</div>
+        </div>
+        
+        <div class="terminal-container">
+            <iframe 
+                class="terminal-iframe" 
+                src="http://localhost:8888"
+                id="terminalFrame">
+            </iframe>
+        </div>
+        
+        <div class="status-bar">
+            <span id="status">● Connected</span>
+        </div>
+    </div>
+
+    <script>
+        let isMinimized = false;
+        
+        function toggleTerminal() {
+            const footer = document.getElementById('terminalFooter');
+            const toggleText = document.getElementById('toggleText');
+            
+            isMinimized = !isMinimized;
+            
+            if (isMinimized) {
+                footer.classList.add('minimized');
+                toggleText.textContent = '▲ Show Terminal';
+            } else {
+                footer.classList.remove('minimized');
+                toggleText.textContent = '▼ Hide Terminal';
+            }
+        }
+        
+        function maximizeTerminal() {
+            const footer = document.getElementById('terminalFooter');
+            if (footer.style.height === '80vh') {
+                footer.style.height = '300px';
+            } else {
+                footer.style.height = '80vh';
+            }
+        }
+        
+        function runCommand(command) {
+            // Focus the terminal iframe
+            const iframe = document.getElementById('terminalFrame');
+            iframe.focus();
+            
+            // Note: Direct command injection into ttyd requires WebSocket connection
+            // This is a placeholder - actual implementation would need WebSocket communication
+            console.log(`Would run command: ${command}`);
+            
+            // Alternative: Open command in new terminal window
+            // window.open(`http://localhost:7681/?arg=${encodeURIComponent(command)}`);
+        }
+        
+        // Check terminal connection status
+        function checkTerminalStatus() {
+            const status = document.getElementById('status');
+            const iframe = document.getElementById('terminalFrame');
+            
+            // Simple connection check
+            iframe.onload = () => {
+                status.textContent = '● Connected';
+                status.style.color = '#00ff00';
+            };
+            
+            iframe.onerror = () => {
+                status.textContent = '● Disconnected';
+                status.style.color = '#ff0000';
+            };
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            checkTerminalStatus();
+            
+            // Auto-refresh iframe if connection is lost
+            setInterval(checkTerminalStatus, 10000);
+        });
+        
+        // Handle iframe communication (if needed)
+        window.addEventListener('message', (event) => {
+            if (event.origin === 'http://localhost:7681') {
+                console.log('Message from terminal:', event.data);
+            }
+        });
+    </script>
+</body>
+</html>

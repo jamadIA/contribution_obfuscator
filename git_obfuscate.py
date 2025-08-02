@@ -1,11 +1,15 @@
 import argparse
 import os
 import sys
+import * from calulator_utils
 from datetime import datetime, timedelta
 from random import randint
 from subprocess import Popen
 
-USAGE = "Usage: path/to/script.py [options]; choose either random noise or chart"
+USAGE = "Usage: git_obfuscate.py [-r REPOSITORY] [-dry] [-h] [-n] [-m] [-p POISSON]"
+        "[-t] [-u] [-f FILE] [-d DATE] [-o OFFSET]\n"
+        "Choose either random noise to generate a chart or specify a custom one\n"
+        "see readme for full description"
 
 import numpy as np
 import pandas as pd
@@ -251,18 +255,31 @@ def parse_arguments() -> argparse.ArgumentParser:
     """parses arguemtns as specified."""
     parser = argparse.ArgumentParser()
 
-    #   REQUIRED ARGS
+    #   GENERAL USECASE ARGS
     parser.add_argument(
-        "-r", "--repository", help="specify a repository where the commits will go"
+        "-r",
+        "--repository",
+        help="specify a repository where the commits will go"
     )
     parser.add_argument(
         "-dry",
         "--dry",
-        help="doesn't push anything to the repository. if you won't specify repository it's implicitly a dry run",
+        help="generates images but doesn't commit anything to the repository. if you won't specify repository it's implicitly a dry run",
     )
 
     #   1) GENERATE RANDOM NOISE
-    parser.add_argument("-n", "--noise", help="create chart with random noise")
+    #
+    parser.add_argument(
+        "-d",
+        "--date",
+        type=str,
+        help="specify start date NOTE: valid chart should start on a SUNDAY!",
+    )
+    parser.add_argument(
+        "-n", 
+        "--noise", 
+        help="create chart with random noise"
+    )
     parser.add_argument(
         "-m",
         "--max",
@@ -288,20 +305,21 @@ def parse_arguments() -> argparse.ArgumentParser:
         help="generate noise with uniform distribution",
     )
 
-    #   2) PUSH CHANGES SPECIFIED BY A .CHART
-    parser.add_argument("-f", "--file", type=str, help="speicfy a .chart file")
+    #   2) COMMIT CHANGES SPECIFIED BY A .CHART
+    #
     parser.add_argument(
-        "-d",
-        "--date",
+        "-f",
+        "--file",
         type=str,
-        help="specify start date NOTE: valid chart should start on a SUNDAY!",
+        help="speicfy a .chart file"
     )
-    parser.add_argument(
+   parser.add_argument(
         "-o",
         "--offset",
         type=str,
         help="specify day of last update, to opt out of some unnecessary work",
     )
+
     return parser.parse_args()
 
 

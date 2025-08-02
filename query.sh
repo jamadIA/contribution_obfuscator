@@ -1,12 +1,7 @@
 #!/bin/bash
 
-command -v gh >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-  echo "gh command not found. install github cli first."
-  exit 1
-fi
-
-from="${1:-$(date -d "1 year ago" +"%Y")-01-01}"
+from="${2:-$(date -d "1 year ago" +"%Y")-01-01}"
+output_file="${1:-remote_contribution_graph.csv}"
 
 gh api graphql \
 -F from="$from"'T00:00:01Z' \
@@ -27,11 +22,11 @@ gh api graphql \
     }
   }' | jq \
 -r '.data.viewer.contributionsCollection.contributionCalendar.weeks[] | .contributionDays[] | "\(.date),\(.contributionCount)"' \
-> contribution_graph.csv
+> "$output_file"
 
-exit 0
+exit $?
 
-
+# TODO delete:
 GIT_USERNAME="$1"
 from="${2:-2024-01-01}"
 to="${3:-2024-12-31}"
