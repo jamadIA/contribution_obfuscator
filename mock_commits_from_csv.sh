@@ -17,7 +17,7 @@ if [[ ! -f "$CONTRIBUTIONS_FILE" ]]; then
 fi
 
 if [[ -z "$GIT_URL" ]]; then
-  echo "Usage: $0 <repository-url> <contribution-csv>"
+  echo "Usage: $0 <github-repository-url> <contribution-csv-file>"
 fi
 
 
