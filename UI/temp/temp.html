@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucide Icons with React</title>
+    <!-- Load React and ReactDOM from CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <!-- Load Babel Standalone for JSX transformation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Load Lucide (vanilla JS version) from CDN -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+        });
+
+        const { useState, useEffect, useRef } = React;
+        function IconComponent({ iconName, size = 24, color = "currentColor" }) {
+            const iconRef = useRef(null);
+            useEffect(() => {
+                if (iconRef.current && window.lucide && window.lucide[iconName]) {
+                    // Clear previous icon
+                    iconRef.current.innerHTML = '';
+                    // Create the icon
+                    const iconElement = window.lucide[iconName];
+                    if (iconElement) {
+                        iconRef.current = iconElement;
+                        
+                        // Set attributes
+                        //const svg = iconRef.current.querySelector('svg');
+                        //if (svg) {
+                        //    svg.setAttribute('width', size);
+                        //    svg.setAttribute('height', size);
+                        //    svg.setAttribute('stroke', color);
+                        //}
+                    }
+                }
+            }, [iconName, size, color]);
+
+            return <span ref={iconRef}></span>;
+        }
+
+        function App() {
+            const [count, setCount] = useState(0);
+
+            return (
+                <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+                    <h1>
+                        <IconComponent iconName="Heart" size={32} color="red" />
+                        <div>Lucide Icons with React</div>
+                    </h1>
+                    <div style={{ margin: '20px 0' }}>
+                        <i data-lucide="volume-2">test i</i>
+                        <span data-lucide="menu">test span</span>
+                        <button 
+                            onClick={() => setCount(count - 1)}
+                            style={{ 
+                                margin: '5px', 
+                                padding: '10px 15px',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px'
+                            }}
+                        >
+                            <IconComponent iconName="Minus" size={16} />
+                            <div>Decrease</div>
+                        </button>
+                        <span style={{ margin: '0 20px', fontSize: '18px' }}>
+                            Count: {count}
+                        </span>
+                        <button 
+                            onClick={() => setCount(count + 1)}
+                            style={{ 
+                                margin: '5px', 
+                                padding: '10px 15px',
+                                fontSize: '16px',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '5px'
+                            }}
+                        >
+                            <IconComponent iconName="Plus" size={16} />
+                            Increase
+                        </button>
+                    </div>
+
+                    <div style={{ marginTop: '30px' }}>
+                        <h3>Available Icons Examples:</h3>
+                        <div style={{ display: 'flex', gap: '15px', alignItems: 'center', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <IconComponent iconName="User" size={20} />
+                                <span>User</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <IconComponent iconName="Mail" size={20} />
+                                <span>Mail</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <IconComponent iconName="Settings" size={20} />
+                                <span>Settings</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <IconComponent iconName="Home" size={20} />
+                                <span>Home</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <IconComponent iconName="Search" size={20} />
+                                <span>Search</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

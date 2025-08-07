@@ -4,7 +4,7 @@ REPO_URL=""
 CHART_FILE=""
 REMOTE_GRAPH_FILE="remote_contribution_graph.csv"
 
-SCRIPT_DIR="$(cd $(dirname "$0") || pwd)"
+SCRIPT_DIR="$(cd $(dirname "$0") || exit 1)"
 
 
 declare LOCALPYTHON
@@ -28,15 +28,18 @@ for indx in "${!ARGS[@]}"; do
   elif [[ "${ARGS[$indx]}" =~ ^(-r|--repository)$ ]]; then
     REPO_URL="${ARGS[$(($indx + 1))]}"
   elif [[ "${ARGS[$indx]}" =~ ^-?-editor$ ]]; then
+    cd "$SCRIPT_DIR"/UI || (echo "missing GUI deps. Quitting."; exit 1;)
     exit_status=0
     ttyd -i 127.0.0.1 --port 8888 --writable bash & #>/dev/null 2>&1 &
     ttyd_id="$!"
-    $LOCALPYTHON -m http.server 8080 & open "http://127.0.0.1:8080/web_ui.html" #>/dev/null 2>&1 &
+    $LOCALPYTHON -m http.server 8080 & 
+    ps cax | grep "$ttyd_id" >/dev/null
+    [ $? -eq 0 ] || echo "ttyd failed to open"
     server_id="`pgrep -f "python3 -m http.server 8080"`"
-    sleep 0.6
+    [ $? == 0 ] && open "http://127.0.0.1:8080/" #>/dev/null 2>&1 &
     if [ $? == 0 ]; then
       echo "Press any key to disconnect"
-      read -s -r
+      read -s -r -n 1
       echo
       echo "cleaning up server job id: $server_id"
       kill $server_id
@@ -44,7 +47,7 @@ for indx in "${!ARGS[@]}"; do
       echo "failed to host the server"
       exit_status=1
     fi
-    echo "cleaning up ttyd job id: $server_id"
+    echo "cleaning up ttyd job id: $ttyd_id"
     kill $ttyd_id
     exit $exit_status
   fi
